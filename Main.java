@@ -1,12 +1,15 @@
+import java.io.IOException;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         MainPage();
     }
-    public static void MainPage(){
+
+    public static void MainPage() throws IOException {
         Scanner scanner = new Scanner(System.in);
         System.out.println("---------------------------------------------------");
         System.out.println("                  Welcome To Nmap                  ");
@@ -20,7 +23,7 @@ public class Main {
 
         switch (inputNumMainPage) {
             case 1:
-
+                GetHostAndPort();
                 break;
             case 2:
                 checkinhPorys();
@@ -32,6 +35,32 @@ public class Main {
                 MainPage();
         }
     }
+
+    //--------- part 1---------------------------------------------
+    private static void GetHostAndPort() throws IOException {
+        Scanner scanner = new Scanner(System.in);
+        // دریافت هاست و پورت‌ها از کاربر
+        System.out.print("Enter the host/IP address: ");
+        String host = scanner.nextLine();
+        System.out.print("Enter the port: ");
+        int port = scanner.nextInt();
+        HostChecker(host,port);
+    }
+    private static void HostChecker(String inputHost , int inputPort) throws IOException {
+
+        String host = inputHost;
+        int port = inputPort;
+
+        // Create a Socket
+        try (Socket socket = new Socket(InetAddress.getByName(host), port)) {
+            // Try to connect
+            System.out.println(host + " is up");
+        } catch (IOException e) {
+            System.out.println(host + " is down");
+        }
+    }
+
+    //--------- part 2---------------------------------------------
     private static String getServiceName(int port) { // تابع برای گرفتن نام سرویس بر اساس شماره پورت
         switch (port) {
             case 20:
@@ -54,7 +83,7 @@ public class Main {
                 return "Unknown Service";
         }
     }
-    private static void checkinhPorys(){
+    private static void checkinhPorys() {
         Scanner scanner = new Scanner(System.in);
         // دریافت هاست و رنج پورت‌ها از کاربر
         System.out.print("Enter the host/IP address: ");
@@ -74,8 +103,8 @@ public class Main {
                 socket.connect(new InetSocketAddress(host, port), 100);
 
                 // نمایش اطلاعات پورت باز
-                if(getServiceName(port)!= "Unknown Service")
-                System.out.println("Port " + port + " is open - Service: " + getServiceName(port));
+                if (getServiceName(port) != "Unknown Service")
+                    System.out.println("Port " + port + " is open - Service: " + getServiceName(port));
 
                 // بستن سوکت
                 socket.close();
@@ -87,4 +116,6 @@ public class Main {
         // بستن اسکنر
         scanner.close();
     }
+
+
 }
